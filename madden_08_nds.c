@@ -59,6 +59,11 @@ void write_short(uint8_t *buffer, uint32_t addr, uint16_t val)
 	buffer[addr+1] = (uint8_t)val;
 }
 
+void write_word(uint8_t *buffer, uint32_t addr, uint32_t val) {
+	write_short(buffer, addr, (uint16_t)(val >> 16));
+	write_short(buffer, addr+2, (uint16_t)(val));
+}
+
 int find_expected_sum(uint8_t *buffer, struct Region region, int verbose, int overwrite)
 {
 	uint32_t addr;
@@ -147,6 +152,7 @@ int main(int argc, char **argv)
 	{
 		find_expected_sum(buffer, all_regions[i], 1, 1);
 	}
+	write_word(buffer, 0x0, HEADER);
 	output = fopen(output_fname, "wb");
 
 	if (!input)
